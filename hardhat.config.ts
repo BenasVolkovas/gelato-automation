@@ -10,27 +10,35 @@ import "./tasks/block-number";
 
 dotenv.config();
 
-// You need to export an object to set up your config
-// Go to https://hardhat.org/config/ to learn more
+const PRIVATE_KEY: string = process.env.PRIVATE_KEY || "";
+const RINKEBY_URL: string = process.env.RINKEBY_URL || "";
+const ETHERSCAN_API_KEY: string = process.env.ETHERSCAN_API_KEY || "";
+const COINMARKETCAP_API_KEY: string = process.env.COINMARKETCAP_API_KEY || "";
 
 const config: HardhatUserConfig = {
     solidity: "0.8.7",
+    defaultNetwork: "hardhat",
     networks: {
         rinkeby: {
             chainId: 4,
-            url: process.env.RINKEBY_URL || "",
-            accounts:
-                process.env.PRIVATE_KEY !== undefined
-                    ? [process.env.PRIVATE_KEY]
-                    : [],
+            url: RINKEBY_URL || "",
+            accounts: PRIVATE_KEY !== undefined ? [PRIVATE_KEY] : [],
+        },
+        localhost: {
+            chainId: 31337,
+            url: "http://127.0.0.1:8545/",
         },
     },
     gasReporter: {
-        enabled: process.env.REPORT_GAS !== undefined,
-        currency: "USD",
+        enabled: false,
+        currency: "EUR",
+        outputFile: "gas-report.txt",
+        noColors: true,
+        coinmarketcap: COINMARKETCAP_API_KEY,
+        token: "ETH",
     },
     etherscan: {
-        apiKey: process.env.ETHERSCAN_API_KEY,
+        apiKey: ETHERSCAN_API_KEY,
     },
 };
 
