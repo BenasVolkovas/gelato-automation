@@ -1,18 +1,18 @@
 import { ethers, run } from "hardhat";
 
 async function main() {
-    const Counter = await ethers.getContractFactory("Counter");
-    const arg = 60;
-    const counter = await Counter.deploy(arg, {
+    const gelatoFactory = await ethers.getContractFactory("Gelato");
+    const gelatoAddress = "0x8c089073a9594a4fb03fa99feee3efff0e2bc58a"; // rinkeby
+    const gelato = await gelatoFactory.deploy(gelatoAddress, {
         value: ethers.utils.parseEther("0.01"),
     });
 
-    await counter.deployed();
+    await gelato.deployed();
 
-    console.log("Greeter deployed to:", counter.address);
+    console.log("Greeter deployed to:", gelato.address);
     console.log("Waiting for the transaction confirmation...");
-    await counter.deployTransaction.wait(6);
-    await verify(counter.address, [arg]);
+    await gelato.deployTransaction.wait(6);
+    await verify(gelato.address, [gelatoAddress]);
 }
 
 const verify = async (contractAddress: string, args: any[]) => {
