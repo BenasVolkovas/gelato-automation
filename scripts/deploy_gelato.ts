@@ -1,35 +1,26 @@
-import { ethers, run } from "hardhat";
+import { ethers, run, network } from "hardhat";
+import { verify } from "./helper_functions";
 
 async function main() {
-    const gelatoFactory = await ethers.getContractFactory("Gelato");
-    const gelatoAddress = "0x8c089073a9594a4fb03fa99feee3efff0e2bc58a"; // rinkeby
-    const gelato = await gelatoFactory.deploy(gelatoAddress, {
-        value: ethers.utils.parseEther("0.01"),
-    });
+    if (network.config.chainId === 4) {
+        const gelatoFactory = await ethers.getContractFactory("Gelato");
 
-    await gelato.deployed();
-
-    console.log("Greeter deployed to:", gelato.address);
-    console.log("Waiting for the transaction confirmation...");
-    await gelato.deployTransaction.wait(6);
-    await verify(gelato.address, [gelatoAddress]);
-}
-
-const verify = async (contractAddress: string, args: any[]) => {
-    console.log("Verifying contract...");
-    try {
-        await run("verify:verify", {
-            address: contractAddress,
-            constructorArguments: args,
+        // rinkeby chain chainId
+        const gelatoAddress = "0x8c089073a9594a4fb03fa99feee3efff0e2bc58a"; // rinkeby
+        const gelato = await gelatoFactory.deploy(gelatoAddress, {
+            value: ethers.utils.parseEther("0.01"),
         });
-    } catch (e: any) {
-        if (e.message.toLowerCase().includes("already verified")) {
-            console.log("Already verified!");
-        } else {
-            console.log(e);
-        }
+
+        await gelato.deployed();
+
+        console.log("Gelato contract deployed to:", gelato.address);
+        console.log("Waiting for the transaction confirmation...");
+        await gelato.deployTransaction.wait(6);
+        await verify(gelato.address, [gelatoAddress]);
+    } else {
+        console.log("Error: Not a rinkeby network.");
     }
-};
+}
 
 main().catch((error) => {
     console.error(error);
